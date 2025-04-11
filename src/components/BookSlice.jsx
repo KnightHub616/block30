@@ -1,4 +1,4 @@
-import { data } from "react-router-dom";
+// import { data } from "react-router-dom";
 import api from "../../store/api";
 import { createSlice } from "@reduxjs/toolkit";
 

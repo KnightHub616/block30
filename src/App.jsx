@@ -1,12 +1,11 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import bookLogo from "./assets/books.png";
-
-const Books = () => <div>Books</div>;
-const BookDetails = () => <div>Book Details</div>;
-const Login = () => <div>Login</div>;
-const Register = () => <div>Register</div>;
-const Account = () => <div>Account</div>;
+import Books from "./Books";
+import BookDetails from "./BookDetails";
+import Login from "./Login";
+import Register from "./Register";
+import Account from "./Account";
 
 function App() {
   const [token, setToken] = React.useState(null);
