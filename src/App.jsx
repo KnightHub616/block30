@@ -1,11 +1,11 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import bookLogo from "./assets/books.png";
-import Books from "./Books";
-import BookDetails from "./BookDetails";
-import Login from "./Login";
-import Register from "./Register";
-import Account from "./Account";
+import Books from "./components/Books";
+import BookDetails from "./components/BookDetails";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Account from "./components/Account";
 
 function App() {
   const [token, setToken] = React.useState(null);
