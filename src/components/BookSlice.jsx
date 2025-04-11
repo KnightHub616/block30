@@ -1,6 +1,7 @@
 // import { data } from "react-router-dom";
-import api from "../../store/api";
+import api from "./api";
 import { createSlice } from "@reduxjs/toolkit";
+
 
 
 
@@ -43,11 +44,11 @@ const storeToken = (state, { payload }) => {
   };
   
   const bookSlice = createSlice({
-    name: "books",
+    name: "book",
     initialState: {},
     reducers: {},
     extraReducers: (build) => {
-      if (api.endpoints?.AddBooks?.matchFulfilled) build.addMatcher(api.endpoints.books.matchFulfilled, storeToken);
+      if (api.endpoints?.AddBook?.matchFulfilled) build.addMatcher(api.endpoints.books.matchFulfilled, storeToken);
     },
   });
   
@@ -56,7 +57,7 @@ const storeToken = (state, { payload }) => {
   
   export const {
     useGetBookQuery,
-    useGetPBooksQuery,
+    useGetBooksQuery,
     useAddBookMutation,
    useDeleteBookMutation,
   } = bookApi;
