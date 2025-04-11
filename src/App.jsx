@@ -1,6 +1,9 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import bookLogo from "./assets/books.png";
+import { Provider } from "react-redux";
+import { useState } from "react";
+import store from "../store/store";
 
 const Books = () => <div>Books</div>;
 const BookDetails = () => <div>Book Details</div>;
