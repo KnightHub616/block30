@@ -40,7 +40,7 @@ function App() {
         </nav>
 
         <Routes>
-          <Route path="/books" element={<Books />}></Route>
+          <Route path="/" element={<Books />}></Route>
           <Route path="/books/:id" element={<BookDetails />}></Route>
           <Route path="/login" element={<Login />}></Route>
           <Route path="/register" element={<Register />}></Route>
