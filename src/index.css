@@ -22,3 +22,9 @@ img {
   height: 100%;
   object-fit: cover;
 }
+
+.myBooks{
+  display: inline-grid
+;
+    justify-items: stretch;
+}

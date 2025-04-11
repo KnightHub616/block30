@@ -9,10 +9,12 @@ import BookDetails from "./components/BookDetails";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Account from "./components/Account";
+import Navigations from "./components/Navigations";
 
 function App() {
   const [token, setToken] = React.useState(null);
-  const [selectedBookId, setSelectedBookId] = useState();
+ 
+
   return (
     <Provider store={store}>
       <header>
@@ -21,11 +23,16 @@ function App() {
           Library App
         </h1>
       </header>
-      <BrowserRouter>
-        <nav>
+      <BrowserRouter >
+      <Navigations />
+        
+
+
+{/* //------------------------------------------------------------------------------------// */}
+        {/* <nav>
           <ul>
             <li>
-              <Link to="/books">Books</Link>
+              <Link to="/">Home</Link>
             </li>
             <li>
               <Link to="/login">Login</Link>
@@ -37,7 +44,7 @@ function App() {
               <Link to="/account">Account</Link>
             </li>
           </ul>
-        </nav>
+        </nav> */}
 
         <Routes>
           <Route path="/" element={<Books />}></Route>
@@ -47,13 +54,6 @@ function App() {
           <Route path="/account" element={<Account />}></Route>
         </Routes>
       </BrowserRouter>
-      {/* <main>
-        <Books setSelectedBookId={setSelectedBookId} />
-        <BookDetails
-          selectedBookId={selectedBookId}
-          setSelectedBookId={setSelectedBookId}
-        />
-      </main> */}
     </Provider>
   );
 }
