@@ -1,20 +1,51 @@
-import { useState } from 'react'
-import bookLogo from './assets/books.png'
+import React from "react";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import bookLogo from "./assets/books.png";
+
+const Books = () => <div>Books</div>;
+const BookDetails = () => <div>Book Details</div>;
+const Login = () => <div>Login</div>;
+const Register = () => <div>Register</div>;
+const Account = () => <div>Account</div>;
 
 function App() {
-  const [token, setToken] = useState(null)
+  const [token, setToken] = React.useState(null);
 
   return (
-    <>
-      <h1><img id='logo-image' src={bookLogo}/>Library App</h1>
+    <BrowserRouter>
+      <header>
+        <h1>
+          <img id="logo-image" src={bookLogo} />
+          Library App
+        </h1>
+      </header>
 
-      <p>Complete the React components needed to allow users to browse a library catalog, check out books, review their account, and return books that they've finished reading.</p>
+      <nav>
+        <ul>
+          <li>
+            <Link to="/books">Books</Link>
+          </li>
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+          <li>
+            <Link to="/register">Register</Link>
+          </li>
+          <li>
+            <Link to="/account">Account</Link>
+          </li>
+        </ul>
+      </nav>
 
-      <p>You may need to use the `token` in this top-level component in other components that need to know if a user has logged in or not.</p>
-
-      <p>Don't forget to set up React Router to navigate between the different views of your single page application!</p>
-    </>
-  )
+      <Routes>
+        <Route path="/books" element={<Books />} />
+        <Route path="/books/:id" element={<BookDetails />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/account" element={<Account />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
