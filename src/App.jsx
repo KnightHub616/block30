@@ -1,51 +1,36 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
-import bookLogo from "./assets/books.png";
-
-const Books = () => <div>Books</div>;
-const BookDetails = () => <div>Book Details</div>;
-const Login = () => <div>Login</div>;
-const Register = () => <div>Register</div>;
-const Account = () => <div>Account</div>;
+import React, { useState } from 'react'
+import bookLogo from './assets/books.png'
+import { Provider } from "react-redux"
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import store from "./app/store"
+import Navigations from './components/Navigations';
+import Books from "./components/Books";
+import SingleBook from "./components/SingleBook";
+import Login from "./components/Login";
+import Register from "./components/Register";
+import Account from "./components/Account";
 
 function App() {
-  const [token, setToken] = React.useState(null);
+  const [token, setToken] = useState(null)
 
   return (
-    <BrowserRouter>
+    <Provider store={store}>
       <header>
-        <h1>
-          <img id="logo-image" src={bookLogo} />
-          Library App
-        </h1>
+        <h1><img id='logo-image' src={bookLogo}/>Exclusive Library App</h1>
       </header>
+      <Router>
+        <Navigations />
+        <Routes>
+          <Route path="/" element={<Books />}></Route>
+          <Route path="/books/:id" element={<SingleBook />}></Route>
+          <Route path="/login" element={<Login />}></Route>
+          <Route path="/register" element={<Register />}></Route>
+          <Route path="/account" element={<Account />}></Route>
+        </Routes>
 
-      <nav>
-        <ul>
-          <li>
-            <Link to="/books">Books</Link>
-          </li>
-          <li>
-            <Link to="/login">Login</Link>
-          </li>
-          <li>
-            <Link to="/register">Register</Link>
-          </li>
-          <li>
-            <Link to="/account">Account</Link>
-          </li>
-        </ul>
-      </nav>
-
-      <Routes>
-        <Route path="/books" element={<Books />} />
-        <Route path="/books/:id" element={<BookDetails />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/account" element={<Account />} />
-      </Routes>
-    </BrowserRouter>
-  );
+      </Router>
+    </Provider>
+  )
 }
 
-export default App;
+export default App
