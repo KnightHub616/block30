@@ -26,9 +26,9 @@ const bookApi = api.injectEndpoints({
       }),
       addBook: build.mutation({
         query: (bookId) => ({
-          url: `/books/${bookId}`,
+          url: `/reservations/`,
           method: "POST",
-          body: {title, author, description }
+          body: {bookId},
         }),
         invalidatesTags: ["Books"],
     })
