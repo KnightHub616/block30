@@ -15,6 +15,8 @@ export default function Navigations() {
               Home
             </a>
           </div>
+         </nav>
+         <nav>
           <div>
             <button className="navbar-toggler" type="button">
               <span>
