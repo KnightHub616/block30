@@ -1,44 +1,71 @@
-import React, { useEffect, useState } from "react";
-
+/* TODO - add your code to create a functional React component that renders account details for a logged in user. Fetch the account data from the provided API. You may consider conditionally rendering a message for other users that prompts them to log in or create an account.  */
+import React, { useEffect, useState } from "react"
 const Account = () => {
-  const [user, setUser] = useState(null);
-  const [books, setBooks] = useState([]);
+    const [user,setUser] = useState(null);
+    const [books, setBooks] = useState([]);
+    useEffect(() => {
+        fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/users/me", {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Unauthorized or error fetching user details");
+            }
+            return response.json();
+          })
+          .then((data) => setUser(data))
+          .catch((error) => console.error("Error:", error));
 
-  useEffect(() => {
-    // Fetch the user data from the API
-    fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/me")
-      .then((response) => response.json())
-      .then((data) => setUser(data));
+        fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/reservations", {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Unauthorized or error fetching reservation details");
+            }
+            return response.json();
+          })
+          .then((data) => setBooks(data))
+          .catch((error) => console.error("Error:", error));
 
-    // Fetch the user's checked-out books from the API
-    fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/me/books")
-      .then((response) => response.json())
-      .then((data) => setBooks(data));
-  }, []);
-
-  if (!user) {
-    return <div>Please log in to view your account</div>;
-  }
-
-  return (
-    <div>
-      <h2>Account Details</h2>
-      <p>Username: {user.username}</p>
-      <p>Email: {user.email}</p>
-
-      <h3>Checked-out Books</h3>
-      {books.length === 0 ? (
-        <p>You have no checked-out books.</p>
-      ) : (
-        <ul>
-          {books.map((book) => (
-            <li key={book.id}>{book.title}</li>
-          ))}
-        </ul>
-      )}
-    </div>
-  );
-};
-
+    }, [])
+    if(!user){
+        return (
+            <>
+                <div>Please log in to view your account</div>
+            </>
+        )
+    }
+    return(
+        <div className="accountDetails">
+            <div>
+                <h2>Account Details:</h2>
+            </div>
+            <div>
+                <p>First Name: {user.firstname}</p>
+                <p>Last Name: {user.lastname}</p>
+                <p>Email: {user.email}</p>
+                <p>Id: {user.id}</p>
+            </div>
+            <div>
+                <h2>Checked-out Books</h2>
+                {books.length === 0 ? 
+                    (<p>You have no checked-out books</p>) : 
+                    (<ul>
+                        {books.map((book) => (
+                            <li key={book.id}> {book.title} </li>
+                        ))}
+                    </ul>)
+                }
+            </div>
+        </div>
+    )
+}
 export default Account;
-// completed by Josue
+

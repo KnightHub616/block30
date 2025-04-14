@@ -4,27 +4,59 @@ body {
   margin: 0;
   padding: 0;
 }
-
 #logo-image {
   width: 30px;
   margin-right: 10px;
 }
 
 /* Add your own custom styles here */
-* {
-  box-sizing: border-box;
-  margin: 10px;
-    padding: 3px;
+
+.form {
+  width: 60%;
+  margin: 10px auto;
+  background-color: mediumaquamarine;
+  padding: 35px 150px 150px 150px;
+  border-radius: 15%;
+}
+.form h1{
+  text-align: center;
+  padding-bottom: 50px;
+  text-shadow: 1px 1px 1px whitesmoke;
+}
+.myBooks {
+  list-style: none;
+  display: -ms-inline-grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.5rem;
+  
+  li {
+    display: inline-block;
+    flex-flow:column;
+    gap: 1ch;
+    padding: 7px;
+    
+    figure img {
+      flex: 1;
+      height: 350px;
+      width: 350px;
+    }
+  }
+}
+h2{
+  text-align: center;
+  padding: 10px;
+}
+.book{
+  margin: 0 auto;
+  width: 50%;
+  
+  img {
+    flex: 1;
+    height: 350px;
+    width: 350px;
+  }
+}
+.accountDetails {
+  text-align: center;
 }
 
-img {
-  width: 10%;
-  height: 50%;
-  object-fit: cover;
-}
-
-.myBooks{
-  display: inline-grid
-;
-    justify-items: stretch;
-}
