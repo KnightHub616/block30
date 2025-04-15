@@ -1,16 +1,15 @@
 /* TODO - add your code to create a functional React component that renders details for a single book. Fetch the book data from the provided API. You may consider conditionally rendering a 'Checkout' button for logged in users. */
 import { useGetBookQuery, useAddBookMutation } from "./BookSlice";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 import React from "react";
 
 
 export default function SingleBook() {
   const { id } = useParams();
   const { isLoading, data: book } = useGetBookQuery(id);
-  const [checkOutBook] = useAddBookMutation(id);
+  const [checkOutBook] = useAddBookMutation();
   const navigate = useNavigate();
-  const [selectedBookId, setSelectedBookId] = useState(null);
+  
  
 
  async function handleCheckout() {
@@ -33,11 +32,7 @@ export default function SingleBook() {
      
   }
 }
-//   useEffect(() => {
-//     if (id) {
-//       setSelectedBookId(id);
-//     }
-//   }, [id]);
+
 
   let $details;
   if (!id) {

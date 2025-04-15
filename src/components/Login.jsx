@@ -7,7 +7,7 @@ export default function Login(){
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [ logIn ] = useLoginAccountMutation();
-    const { isLoading, error} = useLoginAccountMutation();
+    // const { isLoading, error} = useLoginAccountMutation();
     
     async function checkUser(event){
         event.preventDefault();
@@ -52,8 +52,8 @@ export default function Login(){
                 </div>
                 <button type="submit" className="btn btn-primary">Log In</button>
             </form>
-            {isLoading && <output>Checking Account Credentials...</output>}
-            {error && <output>{error.message}</output>}
+            {/* {isLoading && <output>Checking Account Credentials...</output>}
+            {error && <output>{error.message}</output>} */}
         </div>
     )
 }
