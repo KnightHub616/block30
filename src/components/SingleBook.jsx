@@ -1,74 +1,113 @@
-/* TODO - add your code to create a functional React component that renders details for a single book. Fetch the book data from the provided API. You may consider conditionally rendering a 'Checkout' button for logged in users. */
 import { useGetBookQuery, useAddBookMutation } from "./BookSlice";
 import { useParams, useNavigate } from "react-router-dom";
 import React from "react";
 
-
 export default function SingleBook() {
   const { id } = useParams();
-  const { isLoading, data: book } = useGetBookQuery(id);
-  const [checkOutBook] = useAddBookMutation();
+  const {
+    isLoading,
+    data: book,
+    isError: isBookError,
+    error: bookError,
+  } = useGetBookQuery(id);
+
+  const [checkOutBook, { isLoading: isCheckingOut, error: checkoutError }] =
+    useAddBookMutation();
+
   const navigate = useNavigate();
-  
- 
 
- async function handleCheckout() {
-    // This function will be called when the user clicks the "Checkout" button
-    const token = localStorage.getItem("token");
-    if (!token) {
-     navigate("/login");
-    }else { 
-      try {
-        const response = await checkOutBook(id).unwrap();
-        if (response) {
-          alert("Book checked out successfully!");
-          navigate("/");
-        }
-      } catch (error) {
-        console.error("Failed to checkout book: ", error);
-        alert("Failed to checkout book. Please try again.");
-      }
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
 
-     
+  async function handleCheckout() {
+    if (!isLoggedIn) {
+      navigate("/login?returnTo=/books/" + id);
+      return;
+    }
+
+    try {
+      const response = await checkOutBook(id).unwrap();
+
+      console.log("Checkout successful:", response);
+      alert("Book checked out successfully!");
+      navigate("/");
+    } catch (error) {
+      console.error("Failed to checkout book: ", error);
+      alert(
+        `Failed to checkout book: ${
+          error.data?.message || error.error || "Please try again."
+        }`
+      );
+    }
   }
-}
 
+  if (isLoading) {
+    return <p>Loading book information...</p>;
+  }
 
-  let $details;
-  if (!id) {
-    $details = <p>Please select a book to see more details.</p>;
-  } else if (isLoading) {
-    $details = <p>Loading book information...</p>;
-  } else {
-    $details = (
-      <div className="book">
-        <h3>Title: "{book.title}"</h3>
-        <h4>Id: #{book.id}</h4>
-        <h5>Author: {book.author}</h5>
-        <figure>
-          <img src={book.coverimage} alt={book.description} />
-        </figure>
-        <h5>Description: </h5>
-        <h6>{book.description}</h6>
-        <div className="checkout book">
-          <button
-            className="checkout-button"
-            type="submit"
-            onClick={handleCheckout}
-            
-          >
-            Checkout
-          </button>
-        </div>
-      </div>
+  if (isBookError || !book) {
+    return (
+      <p>
+        Error loading book details:{" "}
+        {bookError?.data?.message || bookError?.error || "Book not found."}
+      </p>
     );
   }
+
   return (
-    <>
+    <div className="container mt-4">
       <aside>
-        <h2>Selected Book</h2>
-        {$details}
+        <h2>Book Details</h2>
+        <div className="book card p-3">
+          <h3>{book.title}</h3>
+
+          <h5>Author: {book.author}</h5>
+          <div className="row g-3">
+            <div className="col-md-4">
+              <figure>
+                <img
+                  src={book.coverimage}
+                  alt={`Cover of ${book.title}`}
+                  className="img-fluid rounded"
+                />
+              </figure>
+            </div>
+            <div className="col-md-8">
+              <h5>Description: </h5>
+              <p>{book.description}</p>
+              {isLoggedIn ? (
+                <button
+                  className="btn btn-primary"
+                  type="button"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut || !book.available}
+                >
+                  {isCheckingOut
+                    ? "Checking out..."
+                    : book.available
+                    ? "Checkout"
+                    : "Unavailable"}
+                </button>
+              ) : (
+                <Link
+                  to={`/login?returnTo=/books/${id}`}
+                  className="btn btn-secondary"
+                >
+                  Login to Checkout
+                </Link>
+              )}
+              {checkoutError && (
+                <div className="alert alert-danger mt-2">
+                  Checkout failed:{" "}
+                  {checkoutError.data?.message ||
+                    checkoutError.error ||
+                    "An error occurred."}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </aside>
-    </>
+    </div>
   );
 }

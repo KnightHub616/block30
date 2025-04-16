@@ -18,7 +18,7 @@ body {
   padding: 35px 150px 150px 150px;
   border-radius: 15%;
 }
-.form h1{
+.form h1 {
   text-align: center;
   padding-bottom: 50px;
   text-shadow: 1px 1px 1px whitesmoke;
@@ -28,13 +28,13 @@ body {
   display: -ms-inline-grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 0.5rem;
-  
+
   li {
     display: inline-block;
-    flex-flow:column;
+    flex-flow: column;
     gap: 1ch;
     padding: 7px;
-    
+
     figure img {
       flex: 1;
       height: 350px;
@@ -42,14 +42,14 @@ body {
     }
   }
 }
-h2{
+h2 {
   text-align: center;
   padding: 10px;
 }
-.book{
+.book {
   margin: 0 auto;
   width: 50%;
-  
+
   img {
     flex: 1;
     height: 350px;
@@ -59,4 +59,3 @@ h2{
 .accountDetails {
   text-align: center;
 }
-

@@ -1,4 +1,5 @@
 import api from "../app/api";
+
 const accountApi = api.injectEndpoints({
   endpoints: (build) => ({
     addAccount: build.mutation({
@@ -12,7 +13,6 @@ const accountApi = api.injectEndpoints({
           password,
         },
       }),
-      invalidatesTags: ["Users"],
     }),
     loginAccount: build.mutation({
       query: ({ email, password }) => ({
@@ -23,17 +23,31 @@ const accountApi = api.injectEndpoints({
           password,
         },
       }),
-      invalidatesTags: ["Users"],
+      invalidatesTags: ["User", "Reservations"],
     }),
-    aboutMe: build.query({
-      query: () => ({
-        url: "/users/me",
-        method: "GET",
-       
+    getUserDetails: build.query({
+      query: () => "/users/me",
+      providesTags: ["User"],
+    }),
+    getUserReservations: build.query({
+      query: () => "/reservations",
+      providesTags: ["Reservations"],
+    }),
+
+    returnBook: build.mutation({
+      query: (reservationId) => ({
+        url: `/reservations/${reservationId}`,
+        method: "DELETE",
       }),
-      providesTags: ["Users"],
+      invalidatesTags: ["Reservations"],
     }),
   }),
 });
 
-export const { useAddAccountMutation, useLoginAccountMutation,useAboutMeQuery } = accountApi;
+export const {
+  useAddAccountMutation,
+  useLoginAccountMutation,
+  useGetUserDetailsQuery,
+  useGetUserReservationsQuery,
+  useReturnBookMutation,
+} = accountApi;

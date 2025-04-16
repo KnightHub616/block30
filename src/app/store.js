@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import api from "./api";
 import reducer from "../components/BookSlice";
-import React from "react";
 
 export const store = configureStore({
   reducer: {
