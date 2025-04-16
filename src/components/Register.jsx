@@ -1,87 +1,104 @@
-/* TODO - add your code to create a functional React component that renders a registration form */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAddAccountMutation } from "./AccountSlice";
+export default function Register({ updateLoginStatus }) {
+  const navigate = useNavigate();
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-export default function Register(){
-    const navigate = useNavigate();
-    const [fname, setFname] = useState("");
-    const [lname, setLname] = useState("");
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [ addUser ] = useAddAccountMutation();
-    const { isLoading, error} = useAddAccountMutation();
+  const [registerUser, { isLoading, error, isError }] = useAddAccountMutation();
 
-    async function postUser(event){
-        event.preventDefault();
-        try{
-            const response = await addUser({fname, lname, email, password});
-            try{
-                localStorage.setItem("token", response.data.token);
-            }
-            catch(error){
-                console.error(error.message)
-            }
-            navigate('/account');
-        }
-        catch(error){
-            console.error(error.message);
-        }
+  async function postUser(event) {
+    event.preventDefault();
+    try {
+      const result = await registerUser({
+        firstname,
+        lastname,
+        email,
+        password,
+      }).unwrap();
+
+      if (result && result.token) {
+        localStorage.setItem("token", result.token);
+        updateLoginStatus(true);
+        navigate("/account");
+      } else if (result && result.message) {
+        navigate("/login?registered=true");
+      } else {
+        console.error(
+          "Registration succeeded but response format was unexpected:",
+          result
+        );
+      }
+    } catch (err) {
+      console.error("Registration failed:", err);
     }
+  }
 
-    return(
-        <div className="form">
-            <h1>Register for free!</h1>
-            <form onSubmit={postUser}>
-                <div className="form-group">
-                    <div className="row">
-                        <div className="col">
-                            <label>First name</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="First name"
-                                name="firstname"
-                                onChange={(e) => setFname(e.target.value)}
-                            />
-                        </div>
-                        <div className="col">
-                            <label>Last name</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                placeholder="Last name"
-                                name="lastname"
-                                onChange={(e) => setLname(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="form-group">
-                    <label>Email Address</label>
-                    <input
-                        type="email"
-                        className="form-control"
-                        aria-describedby="emailHelp"
-                        placeholder="Enter email"
-                        name="email"
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Password</label>
-                    <input
-                        type="password"
-                        className="form-control"
-                        placeholder="Password"
-                        name="password"
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
-                <button type="submit" className="btn btn-primary">Register</button>
-            </form>
-            {isLoading && <output>Creating New Account...</output>}
-            {error && <output>{error.message}</output>}
+  return (
+    <div className="form container mt-4" style={{ maxWidth: "500px" }}>
+      <h1 className="mb-4 text-center">Register</h1>
+      <form onSubmit={postUser}>
+        <div className="form-group mb-3">
+          <label className="form-label">First Name</label>
+          <input
+            type="text"
+            className="form-control"
+            value={firstname}
+            onChange={(e) => setFirstname(e.target.value)}
+            required
+          />
         </div>
-    )
+        <div className="form-group mb-3">
+          <label className="form-label">Last Name</label>
+          <input
+            type="text"
+            className="form-control"
+            value={lastname}
+            onChange={(e) => setLastname(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label className="form-label">Email Address</label>
+          <input
+            type="email"
+            className="form-control"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group mb-3">
+          <label className="form-label">Password</label>
+          <input
+            type="password"
+            className="form-control"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="btn btn-primary w-100"
+          disabled={isLoading}
+        >
+          {isLoading ? "Registering..." : "Register"}
+        </button>
+      </form>
+
+      {isError && error && (
+        <div className="alert alert-danger mt-3" role="alert">
+          Registration failed:{" "}
+          {error.data?.message ||
+            error.error ||
+            "An error occurred. Please try again."}
+        </div>
+      )}
+    </div>
+  );
 }

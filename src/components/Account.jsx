@@ -1,71 +1,142 @@
-/* TODO - add your code to create a functional React component that renders account details for a logged in user. Fetch the account data from the provided API. You may consider conditionally rendering a message for other users that prompts them to log in or create an account.  */
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  useGetUserDetailsQuery,
+  useGetUserReservationsQuery,
+  useReturnBookMutation,
+} from "./AccountSlice";
+
 const Account = () => {
-    const [user,setUser] = useState(null);
-    const [books, setBooks] = useState([]);
-    useEffect(() => {
-        fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/users/me", {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Unauthorized or error fetching user details");
-            }
-            return response.json();
-          })
-          .then((data) => setUser(data))
-          .catch((error) => console.error("Error:", error));
+  const {
+    data: user,
+    isLoading: isLoadingUser,
+    isError: isErrorUser,
+    error: userError,
+  } = useGetUserDetailsQuery();
+  const {
+    data: reservationsData,
+    isLoading: isLoadingReservations,
+    isError: isErrorReservations,
+    error: reservationsError,
+  } = useGetUserReservationsQuery();
+  const [returnBook, { isLoading: isReturning }] = useReturnBookMutation();
+  const [returningBookId, setReturningBookId] = useState(null);
 
-        fetch("https://fsa-book-buddy-b6e748d1380d.herokuapp.com/api/reservations", {
-            method: 'GET',
-            headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`
-            }
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("Unauthorized or error fetching reservation details");
-            }
-            return response.json();
-          })
-          .then((data) => setBooks(data))
-          .catch((error) => console.error("Error:", error));
-
-    }, [])
-    if(!user){
-        return (
-            <>
-                <div>Please log in to view your account</div>
-            </>
-        )
+  const isLoading = isLoadingUser || isLoadingReservations;
+  const handleReturn = async (book) => {
+    const reservationId = book.id;
+    setReturningBookId(reservationId);
+    try {
+      await returnBook(reservationId).unwrap();
+      alert(`Successfully returned "${book.title}"!`);
+    } catch (error) {
+      console.error("Failed to return book:", error);
+      alert(
+        `Failed to return book: ${
+          error.data?.message || error.error || "Please try again."
+        }`
+      );
+    } finally {
+      setReturningBookId(null);
     }
-    return(
-        <div className="accountDetails">
-            <div>
-                <h2>Account Details:</h2>
-            </div>
-            <div>
-                <p>First Name: {user.firstname}</p>
-                <p>Last Name: {user.lastname}</p>
-                <p>Email: {user.email}</p>
-                <p>Id: {user.id}</p>
-            </div>
-            <div>
-                <h2>Checked-out Books</h2>
-                {books.length === 0 ? 
-                    (<p>You have no checked-out books</p>) : 
-                    (<ul>
-                        {books.map((book) => (
-                            <li key={book.id}> {book.title} </li>
-                        ))}
-                    </ul>)
-                }
-            </div>
-        </div>
-    )
-}
-export default Account;
+  };
+  if (isLoading) {
+    return (
+      <div className="container mt-4 text-center">
+        Loading account details...
+      </div>
+    );
+  }
 
+  if (isErrorUser || !user) {
+    let errorMessage = "Please log in to view your account.";
+    if (isErrorUser && userError) {
+      errorMessage = `Error loading account details: ${
+        userError.status || ""
+      } ${userError.data?.message || userError.error || "Please try again."}`;
+      console.error("Error fetching user:", userError);
+    } else if (!user && !isLoadingUser) {
+      errorMessage = "Authentication failed. Please log in.";
+    }
+    return (
+      <div className="container mt-4 text-center">
+        <p>{errorMessage}</p>
+        <Link to="/login" className="btn btn-primary me-2">
+          Login
+        </Link>
+        <Link to="/register" className="btn btn-secondary">
+          Register
+        </Link>
+      </div>
+    );
+  }
+
+  const checkedOutBooks = reservationsData || [];
+
+  return (
+    <div className="accountDetails container mt-4">
+      <div className="card mb-4">
+        <div className="card-header">
+          <h2>Account Details</h2>
+        </div>
+        <div className="card-body">
+          <p>
+            <strong>First Name:</strong> {user.firstname}
+          </p>
+          <p>
+            <strong>Last Name:</strong> {user.lastname}
+          </p>
+          <p>
+            <strong>Email:</strong> {user.email}
+          </p>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h2>Checked-out Books</h2>
+        </div>
+        <div className="card-body">
+          {isLoadingReservations && <p>Loading checked-out books...</p>}
+          {isErrorReservations && (
+            <p className="text-danger">
+              Could not load checked-out books.{" "}
+              {reservationsError?.data?.message || ""}
+            </p>
+          )}
+
+          {!isLoadingReservations &&
+            !isErrorReservations &&
+            (checkedOutBooks.length === 0 ? (
+              <p>You have no checked-out books.</p>
+            ) : (
+              <ul className="list-group list-group-flush">
+                {checkedOutBooks.map((book) => {
+                  const isCurrentlyReturning = returningBookId === book.id;
+                  return (
+                    <li
+                      key={book.id}
+                      className="list-group-item d-flex justify-content-between align-items-center"
+                    >
+                      {book.title}
+                      {}
+                      <button
+                        className="btn btn-sm btn-warning"
+                        onClick={() => handleReturn(book)}
+                        disabled={isCurrentlyReturning || isReturning}
+                      >
+                        {isCurrentlyReturning ? "Returning..." : "Return"}
+                      </button>
+                      {}
+                    </li>
+                  );
+                })}
+              </ul>
+            ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Account;
