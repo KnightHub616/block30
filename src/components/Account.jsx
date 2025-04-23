@@ -19,13 +19,13 @@ export default function Account() {
     navigate("/login");
   }
 console.log(user);
-  async function handleDeleteBook(bookId) {
+  async function handleDeleteBook(user) {
     try {
-      const response = await removeBook(bookId).unwrap();
-      if (response==="success") {
+      const response = await removeBook(user).unwrap();
+      if (response) {
         alert("Book returned successfully!");
-        navigate("/");
       }
+      navigate("/");
     } catch (error) {
       console.error("Failed to return book: ", error);
       
