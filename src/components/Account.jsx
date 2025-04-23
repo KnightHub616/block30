@@ -1,26 +1,34 @@
 /* TODO - add your code to create a functional React component that renders account details for a logged in user. Fetch the account data from the provided API. You may consider conditionally rendering a message for other users that prompts them to log in or create an account.  */
 // import React, { useEffect, useState } from "react";
 import { useDeleteBooksMutation, useGetBookQuery } from "./BookSlice";
-//
+import { useNavigate } from "react-router-dom";
 import { useAboutMeQuery } from "./AccountSlice";
 
 export default function Account() {
   // 
     const [removeBook] = useDeleteBooksMutation();
-  const { isLoading, data: user } = useAboutMeQuery();
+  const { isSuccess, isLoading, data: user } = useAboutMeQuery();
+  const navigate = useNavigate();
+  //
+  
   if (isLoading) {
     return <p>Loading account information...</p>;
+  }
+  if (!isSuccess) {
+    alert ('Please log in to view your account');
+    navigate("/login");
   }
 console.log(user);
   async function handleDeleteBook(bookId) {
     try {
       const response = await removeBook(bookId).unwrap();
-      const result = await response.json();
-      if (result) {
+      if (response==="success") {
         alert("Book returned successfully!");
+        navigate("/");
       }
     } catch (error) {
       console.error("Failed to return book: ", error);
+      
     }
   }
   //
